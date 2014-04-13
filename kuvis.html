@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+
+
+<body>
+<h1> Väripeli
+  <small id="status"></small></h1>
+<canvas id="example" style="width:400px;height:400px;border:1px solid black;">
+
+</canvas>
+<div class="alert alert-info" style="width:500px;">Pelaajan (iso pallo) tehtävänä on yrittää kerätä pisteitä menemällä sen väristen pienten pallojen päälle, kuin se sillä hetkellä itse on. Pieniä palloja ilmestyy satunnaisnopeudella ja satunnaisvärisinä. Jos pelaaja ei liiku yli sekuntiin, hän menettää pisteitä. Kontrollinäppäimet: a - w - s - d </di
+</body>
+
+
+<head>
+  <meta charset="ISO-8859-1" />
+<script type="text/javascript" src="jquery.js"> </script>
+<script type="text/javascript" src="paper-full.js"> </script>
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+<script>
+function findPos(obj) {
+    var curleft = 0, curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+        return { x: curleft, y: curtop };
+    }
+    return undefined;
+}
+
+function rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+    return ((r << 16) | (g << 8) | b).toString(16);
+}
+
+window.onload = function() {
+        $('#status').html("Pisteet: 0");
+        window.x_ = 0;
+        window.y_ = 0;
+        window.trigger = 0;
+        window.trigger2 = 0;
+        window.points = 0;
+        window.posx = 0;
+        window.posx = 0;
+		var canvas = document.getElementById('example');
+
+		paper.setup(canvas);
+
+		   var timestep = Math.floor(Math.random() * 3000 + 500 );
+
+		   var group = new paper.Group();
+        setInterval(function(){
+
+             var r = Math.floor(Math.random() * 256 );
+             var g = Math.floor(Math.random() * 256 );
+             var b = Math.floor(Math.random() * 256 );
+             var xx = Math.floor(Math.random() * 330 + 20);
+             var yy = Math.floor(Math.random() * 330 + 20);
+
+
+             //console.log(r, g, b);
+             var c = rgbToHex(r, g, b);
+             var path3 = new paper.Path.Circle({
+       	         center: [xx, yy],
+		         radius: 10,
+	             fillColor: c,
+	             strokeColor: 'black'
+             });
+             group.addChild(path3);
+    
+        
+             paper.view.draw();
+        },timestep);
+
+        setInterval(function(){        
+            if(window.posx == path.position._x && window.posy == path.position._y){
+            	points -= 1;
+            	$('#status').html("Pisteet: " + points);
+    
+            }
+
+              	window.posx = path.position._x;
+            	window.posy = path.position._y;
+
+
+        }, 1000);
+
+
+		var count = 150;
+
+
+		var path = new paper.Path();
+		var path = new paper.Path.Circle(new paper.Point(80, 50), 35);
+		window.posx = path.position._x;
+        window.posy = path.position._y;
+		path.id = "ympyra";
+
+        paper.project.activeLayer.lastChild.fillColor = 'red';
+
+		path.strokeColor = 'black';
+
+
+		paper.view.draw();
+
+
+        paper.view.onFrame = function(event) { 
+            path.fillColor.hue += 0.3;
+
+            if( ( window.x_ != 0 || window.y_ != 0 ) && window.trigger == 1){
+            	path.position = new paper.Point(path.position.x + window.x_, path.position.y + window.y_);
+            	window.trigger = 0;
+            }
+
+            var children = group.children;
+
+            for (var i = 0; i < children.length; i++) {
+	            var child = children[i];
+	            var co = child.fillColor.convert('hsb');
+	            var firstcolor = path.fillColor.convert('hsb');
+
+
+	            //console.log(path.position);
+	            if( Math.abs( child.fillColor.hue % 360 - path.fillColor.hue % 360) < 2 && ( Math.pow( child.position._x - path.position._x, 2) + Math.pow(child.position._y - path.position._y, 2) < Math.pow(45, 2) ) ) {
+	            	//alert("Sama");
+	            	path.hue += 40;
+	            	points += 1;
+	            	$('#status').html("Pisteet: " + points);
+	            }
+
+            }
+
+        
+        } 
+ 
+
+
+}
+
+
+$(document).keypress(function(event){
+ 
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	//alert(keycode);
+	if(keycode == '97'){
+		//vasen
+		window.x_ = -5;
+		window.y_ = 0;
+		window.trigger = 1;
+	}
+	if(keycode == '119'){
+			//ylÃ¶s
+		window.x_ = 0;
+		window.y_ = -5;
+		window.trigger = 1;
+	}
+	if(keycode == '100'){
+		//oikea
+		window.x_ = 5;
+		window.y_ = 0;
+		window.trigger = 1;
+	}
+	if(keycode == '115'){
+		//alas
+		window.x_ = 0;
+		window.y_ = 5;
+		window.trigger = 1;
+	}
+ 
+});
+
+
+$('#example').mousemove(function(e) {
+    var pos = findPos(this);
+    var x = e.pageX - pos.x;
+    var y = e.pageY - pos.y;
+    var coord = "x=" + x + ", y=" + y;
+    var c = this.getContext('2d');
+    var p = c.getImageData(x, y, 1, 1).data; 
+    var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+    //$('#status').html(hex);
+});
+
+
+
+
+</script>
+
+</head>
+</htmL>
