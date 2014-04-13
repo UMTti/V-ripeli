@@ -8,7 +8,7 @@
 <canvas id="example" style="width:400px;height:400px;border:1px solid black;">
 
 </canvas>
-<div class="alert alert-info" style="width:500px;">Pelaajan (iso pallo) teht‰v‰n‰ on yritt‰‰ ker‰t‰ pisteit‰ menem‰ll‰ sen v‰risten pienten pallojen p‰‰lle, kuin se sill‰ hetkell‰ itse on. Pieni‰ palloja ilmestyy satunnaisnopeudella ja satunnaisv‰risin‰. Jos pelaaja ei liiku yli sekuntiin, h‰n menett‰‰ pisteit‰. Kontrollin‰pp‰imet: a - w - s - d </di
+<div class="alert alert-info" style="width:500px;">Pelaajan (iso pallo) teht‰v‰n‰ on yritt‰‰ ker‰t‰ pisteit‰ menem‰ll‰ sen v‰risten pienten pallojen p‰‰lle, kuin se sill‰ hetkell‰ itse on. Pieni‰ palloja ilmestyy satunnaisnopeudella ja satunnaisv‰risin‰. Jos pelaaja ei liiku yli sekuntiin, h‰n menett‰‰ pisteit‰ eneneviss‰ m‰‰rin. Kontrollin‰pp‰imet: a - w - s - d </di
 </body>
 
 
@@ -45,6 +45,7 @@
         window.points = 0;
         window.posx = 0;
         window.posx = 0;
+	window.loss = 1;	//Liikkumatta ollessa menetett‰vien pisteiden m‰‰r‰
         var canvas = document.getElementById('example');
 
         paper.setup(canvas);
@@ -77,10 +78,13 @@
 
         setInterval(function(){        
             if(window.posx == path.position._x && window.posy == path.position._y){
-              points -= 1;
+              points -= window.loss;
+	      window.loss *= 2;
               $('#status').html("Pisteet: " + points);
     
-            }
+            }else{
+	      window.loss = 1;
+	    }
 
             window.posx = path.position._x;
             window.posy = path.position._y;
