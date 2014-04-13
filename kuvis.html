@@ -46,6 +46,7 @@
         window.posx = 0;
         window.posx = 0;
 	window.loss = 1;	//Liikkumatta ollessa menetett‰vien pisteiden m‰‰r‰
+	window.sTime = 3;	//Alussa oleva aika ilman pisteiden menetyst‰
         var canvas = document.getElementById('example');
 
         paper.setup(canvas);
@@ -76,16 +77,18 @@
              paper.view.draw();
         },timestep);
 
-        setInterval(function(){        
-            if(window.posx == path.position._x && window.posy == path.position._y){
-              points -= window.loss;
-	      window.loss *= 2;
-              $('#status').html("Pisteet: " + points);
-    
-            }else{
-	      window.loss = 1;
+        setInterval(function(){
+	    if(window.sTime<=0){	//Onko armonaika loppunut
+            	if(window.posx == path.position._x && window.posy == path.position._y){
+            	  points -= window.loss;
+	    	  window.loss *= 2;
+            	  $('#status').html("Pisteet: " + points);
+            	}else{
+	    	  window.loss = 1;
+	    	}
+	    }else{
+		window.sTime--;
 	    }
-
             window.posx = path.position._x;
             window.posy = path.position._y;
 
